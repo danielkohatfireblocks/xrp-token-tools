@@ -4,7 +4,7 @@ Fireblocks XRPL Raw Signing scripts for the following scenarios:
 
 1. Set "Require tag" and "Domain" configurations on your XRP wallet
 
-2. Set TrustLine in XRP (SOLO Air Drop)
+2. Set TrustLine in XRP
 
 3. Move IOU tokens out of your Fireblocks vault
 
@@ -15,14 +15,20 @@ Fireblocks XRPL Raw Signing scripts for the following scenarios:
 1. Clone the repository:
 
    ```sh
-   git clone https://gitlab.com/slava23/xrp_trustline.git
-   cd xrp_trustline
+   git clone https://github.com/fireblocks/xrp-tools/
+   cd xrp_tools
    ```
 
 2. Install Node dependencies:
 
    ```sh
    yarn install
+   ```
+
+   Or
+
+   ```sh
+   npm i
    ```
 
 3. Rename [`.env.example`](.env.example) to `.env` and set environment variables used across each tool:
@@ -76,6 +82,12 @@ Run:
 yarn trustline
 ```
 
+Or 
+
+```
+npm run trustline
+```
+
 ### Transfer Tokens
 
 Edit [`scripts/transferTokens.ts`](scripts/transferTokens.ts):
@@ -93,6 +105,12 @@ Run:
 yarn transferTokens
 ```
 
+Or
+
+```
+npm run transferTokens
+```
+
 ### Mint a new NFT
 
 Edit [`scripts/nftMint.ts`](scripts/nftMint.ts):
@@ -105,6 +123,12 @@ Run:
 
 ```
 yarn nftMint
+```
+
+Or
+
+```
+npm run nftMint
 ```
 
 ## Note: submit transactions quickly

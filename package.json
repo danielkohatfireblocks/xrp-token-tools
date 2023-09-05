@@ -13,6 +13,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "fireblocks-sdk": "^3.1.2",
+    "inquirer": "^8.2.6",
     "lodash.isequal": "^4.5.0",
     "path": "^0.12.7",
     "ripple-binary-codec": "1.6.0-beta.0",
@@ -22,6 +23,7 @@
     "xrpl": "^2.8.0-beta.0"
   },
   "devDependencies": {
+    "@types/inquirer": "^9.0.3",
     "@types/lodash": "^4.14.191",
     "@types/lodash.isequal": "^4.5.6"
   }
