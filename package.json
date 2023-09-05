@@ -1,0 +1,28 @@
+{
+  "name": "xrpl-tools",
+  "version": "2.0.0",
+  "description": "Fireblocks XRPL Tools",
+  "author": "Fireblocks (https://fireblocks.com)",
+  "license": "ISC",
+  "scripts": {
+    "nftMint": "ts-node scripts/nftMint",
+    "setDestTag": "ts-node scripts/setDestTag",
+    "transferTokens": "ts-node scripts/transferTokens",
+    "trustline": "ts-node scripts/trustline"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "fireblocks-sdk": "^3.1.2",
+    "lodash.isequal": "^4.5.0",
+    "path": "^0.12.7",
+    "ripple-binary-codec": "1.6.0-beta.0",
+    "sentence-case": "^3.0.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4",
+    "xrpl": "^2.8.0-beta.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.191",
+    "@types/lodash.isequal": "^4.5.6"
+  }
+}
