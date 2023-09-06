@@ -8,7 +8,9 @@
     "nftMint": "ts-node scripts/nftMint",
     "setDestTag": "ts-node scripts/setDestTag",
     "transferTokens": "ts-node scripts/transferTokens",
-    "trustline": "ts-node scripts/trustline"
+    "trustline": "ts-node scripts/trustline",
+    "setAuthTrustline": "ts-node scripts/setAuthTrustline",
+    "approveTrustLine": "ts-node scripts/approveTrustLine"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

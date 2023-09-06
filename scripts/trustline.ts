@@ -1,4 +1,4 @@
-import { TrustSet } from "xrpl";
+import { AccountInfoRequest, AccountInfoResponse, AccountSetTfFlags, TrustSet } from "xrpl";
 import inquirer from 'inquirer';
 import { setup } from "../lib/setup";
 
@@ -63,11 +63,40 @@ const getArgs = async () => {
 
 }
 
+const checkAuthTrustline = async (flags: number) => {
+  if ((flags & AccountSetTfFlags.tfRequireAuth) !== 0) {
+    await inquirer.prompt([{
+      name: "trustlineAuth",
+      message: "Issuer has enabled Auth required for trustline - once you perform the trustline, make sure that the issuer approves you.",
+      type: "confirm",
+      async validate(input, answers) {
+        if (!input) {
+          await checkAuthTrustline(flags);
+        }
+      },
+    }]);
+  }
+}
+
 async function main() {
   const { ripple, signer, address } = await setup();
 
   const { tokenId, tokenIssuer, tokenName } = await getArgs();
 
+  const accountData = (await ripple.request({
+    command: 'account_info',
+    account: tokenIssuer,
+    ledger_index: 'current',
+  } as AccountInfoRequest)) as AccountInfoResponse;
+
+  if (!accountData) {
+    console.warn("Couldn't check if the issuer has auth required for trustline enabled");
+  } else {
+    await checkAuthTrustline(accountData.result.account_data.Flags);
+  }
+
+
+  console.log(`Trying to create trustline with ${tokenIssuer} for token ${tokenId}.`);
   const tx: TrustSet = {
     TransactionType: "TrustSet",
     Account: address,
