@@ -1,87 +1,33 @@
 import { AccountInfoRequest, AccountInfoResponse, AccountSetTfFlags, TrustSet } from "xrpl";
 import inquirer from 'inquirer';
 import { setup } from "../lib/setup";
+import { getAnswer, requestConfirmation } from "../lib/userInput";
 
 const TOKEN_ID = "tid";
 const TOKEN_ISSUER = "tis";
 const TOKEN_NAME = "tn";
+const ISSUE_VALUE = "iv";
 
 const getArgs = async () => {
-  const answers = await inquirer.prompt([
-    {
-      type: "input",
-      message: "Please provide the token ID \\ Symbol",
-      name: TOKEN_ID,
-      validate(input, answers) {
-        return input && input !== "" ? true : "Bad"
-      },
-    },
-    {
-      type: "confirm",
-      name: "ConfirmID",
-      message(answers) {
-        return `Please confirm token ID \\ Symbol: ${answers[TOKEN_ID]}`
-      },
-    },
-    {
-      type: "input",
-      message: "Please provide the token issuer",
-      name: TOKEN_ISSUER,
-      validate(input, answers) {
-        return input && input !== ""
-      },
-    },
-    {
-      type: "confirm",
-      name: "ConfirmIssuer",
-      message(answers) {
-        return `Please confirm token issuer: ${answers[TOKEN_ISSUER]}`
-      },
-    },
-    {
-      type: "input",
-      message: "Please provide the token name",
-      name: TOKEN_NAME,
-      validate(input, answers) {
-        return input && input !== ""
-      },
-    },
-    {
-      type: "confirm",
-      name: "ConfirmName",
-      message(answers) {
-        return `Please confirm token name: ${answers[TOKEN_NAME]}`
-      },
-    }
-  ]);
+
+  const tokenId: any = await getAnswer(TOKEN_ID, "Please provide the token ID \\ Symbol");
+  const tokenIssuer: any = await getAnswer(TOKEN_ISSUER, "Please provide the token issuer");
+  const tokenName: any = await getAnswer(TOKEN_NAME, "Please provide the token name");
+  const issueAmount: any = await getAnswer(ISSUE_VALUE, "Please provide the issue value limit");
 
   return {
-    tokenId: answers[TOKEN_ID],
-    tokenIssuer: answers[TOKEN_ISSUER],
-    tokenName: answers[TOKEN_NAME]
+    tokenId: tokenId,
+    tokenIssuer: tokenIssuer,
+    tokenName: tokenName,
+    issueAmount: issueAmount
   }
 
-}
-
-const checkAuthTrustline = async (flags: number) => {
-  if ((flags & AccountSetTfFlags.tfRequireAuth) !== 0) {
-    await inquirer.prompt([{
-      name: "trustlineAuth",
-      message: "Issuer has enabled Auth required for trustline - once you perform the trustline, make sure that the issuer approves you.",
-      type: "confirm",
-      async validate(input, answers) {
-        if (!input) {
-          await checkAuthTrustline(flags);
-        }
-      },
-    }]);
-  }
 }
 
 async function main() {
   const { ripple, signer, address } = await setup();
 
-  const { tokenId, tokenIssuer, tokenName } = await getArgs();
+  const { tokenId, tokenIssuer, tokenName, issueAmount } = await getArgs();
 
   const accountData = (await ripple.request({
     command: 'account_info',
@@ -92,7 +38,10 @@ async function main() {
   if (!accountData) {
     console.warn("Couldn't check if the issuer has auth required for trustline enabled");
   } else {
-    await checkAuthTrustline(accountData.result.account_data.Flags);
+    await requestConfirmation(
+      "Issuer has enabled Auth required for trustline - once you perform the trustline, make sure that the issuer approves you.",
+      () => (accountData.result.account_data.Flags & AccountSetTfFlags.tfRequireAuth) !== 0
+    );
   }
 
 
@@ -105,7 +54,7 @@ async function main() {
     LimitAmount: {
       currency: tokenId,
       issuer: tokenIssuer,
-      value: "200000000",
+      value: issueAmount,
     },
   };
 

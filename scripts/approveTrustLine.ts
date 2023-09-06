@@ -1,48 +1,13 @@
 import { TrustSet } from "xrpl";
 import { setup } from "../lib/setup";
-import inquirer from "inquirer";
+import { getAnswer } from "../lib/userInput";
 
 const getArgs = async (): Promise<{ authorizedAddress: string, tokenId: string }> => {
 
-    const answers = await inquirer.prompt([
-        {
-            name: "authorizedAddress",
-            message: "Please provide the address to which you want to authorized the trustline",
-            type: "input",
-            validate(input, answers) {
-                return input && input !== "" ? true : "Invalid address"
-            },
-        },
-        {
-            name: "confirmAuthAddress",
-            message(answers) {
-                return `Please confirm you want to authorize trustline creation by ${answers['authorizedAddress']}`;
-            },
-            type: 'confirm'
-        },
-        {
-            name: "tid",
-            message: "Please provide the token Id",
-            type: "input",
-            validate(input, answers) {
-                return input && input !== "" ? true : "Invalid address"
-            },
-        },
-        {
-            name: "confirmTid",
-            message(answers) {
-                return `Please confirm you want to authorize trustline creation for token ${answers['tid']}`;
-            },
-            type: 'confirm'
-        },
+    const authAddr = await getAnswer('authAddr', "Please provide the address to which you want to authorized the trustline");
+    const tokenId = await getAnswer('tid', "Please provide the token Id");
 
-    ]);
-
-    if (!answers['confirmAuthAddress'] || !answers['confirmTid']) {
-        return await getArgs();
-    }
-
-    return { authorizedAddress: answers['authorizedAddress'], tokenId: answers['tid'] };
+    return { authorizedAddress: authAddr, tokenId: tokenId };
 
 }
 

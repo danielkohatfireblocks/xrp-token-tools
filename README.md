@@ -6,9 +6,13 @@ Fireblocks XRPL Raw Signing scripts for the following scenarios:
 
 2. Set TrustLine in XRP
 
-3. Move IOU tokens out of your Fireblocks vault
+3. Set Authorization required for trustline
 
-4. Mint a new Non-fungible Token (NFToken)
+4. Approve trustline request (only relevant after setting authorization)
+
+5. Move IOU tokens out of your Fireblocks vault
+
+6. Mint a new Non-fungible Token (NFToken)
 
 ## Setup
 
@@ -86,6 +90,32 @@ Or
 
 ```
 npm run trustline
+```
+
+### Set Authorize Required for Trustline
+Run:
+
+```
+yarn setAuthTrustline
+```
+
+Or 
+
+```
+npm run setAuthTrustline
+```
+
+### Approve trustline request
+Run:
+
+```
+yarn approveTrustLine
+```
+
+Or 
+
+```
+npm run approveTrustLine
 ```
 
 ### Transfer Tokens
