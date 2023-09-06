@@ -26,16 +26,14 @@ export const getAnswer = async (name: string, message: string): Promise<string> 
 }
 
 export const requestConfirmation = async (message: string, cond?: () => boolean) => {
-    await inquirer.prompt([{
-        name: "conf",
+    const answers = await inquirer.prompt([{
+        name: "Confirm",
         message,
         when: cond && cond(),
         type: "confirm",
-        async validate(input, answers) {
-            if (!input) {
-                await requestConfirmation(message, cond);
-            }
-        },
     }]);
+    if(!answers['Confirm']){
+        await requestConfirmation(message, cond);
+    }
 
 }
