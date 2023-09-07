@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "Fireblocks XRPL Tools",
   "author": "Fireblocks (https://fireblocks.com)",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "nftMint": "ts-node scripts/nftMint",
     "setDestTag": "ts-node scripts/setDestTag",
