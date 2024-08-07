@@ -22,7 +22,7 @@ export const getRequiredVariable = (key: string) => {
  *
  * @returns environment-dependent values (constants and API clients)
  */
-export const setup = async () => {
+export const setup = async (initSigner: boolean = true, inputAddress: string = "") => {
   const assetId = process.env.ASSET_ID || "XRP";
   const rippleRpcUrl = process.env.RIPPLE_RPC_URL || "wss://xrplcluster.com";
 
@@ -52,22 +52,31 @@ export const setup = async () => {
 
   const fireblocks = new FireblocksSDK(fireblocksApiSecret, fireblocksApiKey);
 
-  const [{ address }] = await fireblocks.getDepositAddresses(
-    fireblocksVaultAccountIdString,
-    assetId
-  );
+  let address = "", vaultAccountId = 0;
+  if (inputAddress == "") {
+    [{ address }] = await fireblocks.getDepositAddresses(
+      fireblocksVaultAccountIdString,
+      assetId
+    );
 
-  const vaultAccountId = parseInt(fireblocksVaultAccountIdString);
+    vaultAccountId = parseInt(fireblocksVaultAccountIdString);
+    console.info(
+      `Using Vault Account ${vaultAccountId} and ${assetId} address ${address}`
+    );
+  } else {
+    address = inputAddress; vaultAccountId = 0;
 
-  console.info(
-    `Using Vault Account ${vaultAccountId} and ${assetId} address ${address}`
-  );
+    console.info(
+      `NOT using Fireblocks vaults, only address ${address}`
+    );  
+  }
+
 
   const ripple = new RippleClient(rippleRpcUrl);
 
   await ripple.connect();
 
-  const signer = new XrpSigner(ripple, fireblocks, assetId, vaultAccountId);
+  const signer = initSigner ? new XrpSigner(ripple, fireblocks, assetId, vaultAccountId) : null;
 
   return {
     ripple,

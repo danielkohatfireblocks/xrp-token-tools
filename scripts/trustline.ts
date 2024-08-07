@@ -1,4 +1,4 @@
-import { AccountInfoRequest, AccountInfoResponse, AccountSetTfFlags, TrustSet } from "xrpl";
+import { AccountInfoRequest, AccountInfoResponse, AccountSetTfFlags, TrustSet, TrustSetFlags } from "xrpl";
 import inquirer from 'inquirer';
 import { setup } from "../lib/setup";
 import { getAnswer, requestConfirmation } from "../lib/userInput";
@@ -37,11 +37,12 @@ async function main() {
 
   if (!accountData) {
     console.warn("Couldn't check if the issuer has auth required for trustline enabled");
-  } else {
-    await requestConfirmation(
-      "Issuer has enabled Auth required for trustline - once you perform the trustline, make sure that the issuer approves you.",
-      () => (accountData.result.account_data.Flags & AccountSetTfFlags.tfRequireAuth) !== 0
-    );
+  } else if (accountData.result.account_data.Flags & AccountSetTfFlags.tfRequireAuth) {
+    console.warn("Issuer has enabled Auth required for trustline - once you perform the trustline, make sure that the issuer approves you.");
+    //await requestConfirmation(
+    //  "Issuer has enabled Auth required for trustline - once you perform the trustline, make sure that the issuer approves you.",
+    //  () => (accountData.result.account_data.Flags & AccountSetTfFlags.tfRequireAuth) !== 0
+    //);
   }
 
 
@@ -50,7 +51,7 @@ async function main() {
     TransactionType: "TrustSet",
     Account: address,
     Fee: "15000",
-    Flags: 262144,
+    Flags: TrustSetFlags.tfClearNoRipple,
     LimitAmount: {
       currency: tokenId,
       issuer: tokenIssuer,
@@ -58,7 +59,7 @@ async function main() {
     },
   };
 
-  await signer.submitTransaction(
+  await signer!.submitTransaction(
     tx,
     `Setting TrustLine for ${tokenName} token`
   );
